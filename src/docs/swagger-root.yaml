@@ -1,0 +1,19 @@
+openapi: 3.0.3
+info:
+  title: HalaFood API
+  version: 1.0.0
+  description: HalaFood backend API documentation.
+
+servers:
+  - url: localhost:3000
+    description: API base path
+
+tags:
+  - name: Categories
+    description: Main categories and subcategories
+
+paths:
+  $ref: "./swagger-categories.yaml#/paths"
+
+components:
+  $ref: "./swagger-categories.yaml#/components"

@@ -1,0 +1,388 @@
+openapi: 3.0.3
+info:
+  title: HalaFood API
+  version: 1.0.0
+  description: HalaFood backend API documentation.
+servers:
+  - url: 'localhost:3000'
+    description: API base path
+tags:
+  - name: Categories
+    description: Main categories and subcategories
+paths:
+  /main-categories:
+    post:
+      tags:
+        - Categories
+      summary: Create a main category
+      operationId: createMainCategory
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Name of the main category
+                image:
+                  type: string
+                  format: binary
+                  description: Image file for the main category
+              required:
+                - name
+                - image
+      responses:
+        '201':
+          description: Main category created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MainCategory'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      tags:
+        - Categories
+      summary: List main categories with their subcategories
+      operationId: getMainCategoriesWithSubcategories
+      responses:
+        '200':
+          description: List of main categories with subcategories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MainCategoryWithSubcategories'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    put:
+      tags:
+        - Categories
+      summary: Update a main category
+      operationId: updateMainCategory
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID of the main category
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: false
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: New name of the main category
+                image:
+                  type: string
+                  format: binary
+                  description: New image file for the main category
+      responses:
+        '200':
+          description: Main category updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MainCategory'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '404':
+          description: Main category not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      tags:
+        - Categories
+      summary: Delete a main category
+      operationId: deleteMainCategory
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID of the main category
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Main category deleted successfully
+        '404':
+          description: Main category not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  '/main-categories/{mainCategoryId}/subcategories':
+    post:
+      tags:
+        - Categories
+      summary: Create a subcategory for a main category
+      operationId: createSubcategory
+      parameters:
+        - in: path
+          name: mainCategoryId
+          required: true
+          description: ID of the main category
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSubcategoryRequest'
+      responses:
+        '201':
+          description: Subcategory created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subcategory'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '404':
+          description: Main category not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    put:
+      tags:
+        - Categories
+      summary: Update a subcategory
+      operationId: updateSubcategory
+      parameters:
+        - in: path
+          name: mainCategoryId
+          required: true
+          description: ID of the main category
+          schema:
+            type: string
+            format: uuid
+        - in: path
+          name: subcategoryId
+          required: true
+          description: ID of the subcategory
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSubcategoryRequest'
+      responses:
+        '200':
+          description: Subcategory updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subcategory'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '404':
+          description: Main category or subcategory not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  '/subcategories/{subcategoryId}':
+    delete:
+      tags:
+        - Categories
+      summary: Delete a subcategory
+      operationId: deleteSubcategory
+      parameters:
+        - in: path
+          name: subcategoryId
+          required: true
+          description: ID of the subcategory
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Subcategory deleted successfully
+        '404':
+          description: Subcategory not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    MainCategory:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        imageUrl:
+          type: string
+          format: uri
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - imageUrl
+        - createdAt
+    Subcategory:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        mainCategoryId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - mainCategoryId
+        - name
+        - createdAt
+    MainCategoryWithSubcategories:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        imageUrl:
+          type: string
+          format: uri
+        createdAt:
+          type: string
+          format: date-time
+        subcategories:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+              name:
+                type: string
+              createdAt:
+                type: string
+                format: date-time
+            required:
+              - id
+              - name
+              - createdAt
+      required:
+        - id
+        - name
+        - imageUrl
+        - createdAt
+        - subcategories
+    CreateSubcategoryRequest:
+      type: object
+      properties:
+        name:
+          type: string
+      required:
+        - name
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+        - message
+    ValidationErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              msg:
+                type: string
+              param:
+                type: string
+              location:
+                type: string
+      required:
+        - message
