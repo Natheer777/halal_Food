@@ -14,7 +14,7 @@ export class SubcategoryController {
     private readonly createSubcategoryUseCase: CreateSubcategoryUseCase,
     private readonly updateSubcategoryUseCase: UpdateSubcategoryUseCase,
     private readonly deleteSubcategoryUseCase: DeleteSubcategoryUseCase
-  ) {}
+  ) { }
 
   createSubcategory = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -29,10 +29,10 @@ export class SubcategoryController {
         name
       });
 
-      res.status(201).json(result);
+      res.status(201).json({ status: "success", data: result });
     } catch (error) {
       if (error instanceof MainCategoryNotFoundError) {
-        res.status(404).json({ message: error.message });
+        res.status(404).json({ status: "failed", message: error.message });
         return;
       }
 
@@ -58,10 +58,10 @@ export class SubcategoryController {
         name
       });
 
-      res.status(200).json(result);
+      res.status(200).json({ status: "success", data: result });
     } catch (error) {
       if (error instanceof MainCategoryNotFoundError || error instanceof SubcategoryNotFoundError) {
-        res.status(404).json({ message: error.message });
+        res.status(404).json({ status: "failed", message: error.message });
         return;
       }
 
@@ -80,7 +80,7 @@ export class SubcategoryController {
       res.status(204).send();
     } catch (error) {
       if (error instanceof SubcategoryNotFoundError) {
-        res.status(404).json({ message: error.message });
+        res.status(404).json({ status: "failed", message: error.message });
         return;
       }
 

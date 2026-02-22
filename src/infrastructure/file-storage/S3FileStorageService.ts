@@ -23,7 +23,6 @@ export class S3FileStorageService implements IFileStorageService {
 
     this.s3Client = new S3Client({
       region
-      // Credentials will be resolved using the default provider chain (env vars, shared config, etc.)
     });
   }
 
@@ -35,8 +34,7 @@ export class S3FileStorageService implements IFileStorageService {
       Bucket: this.bucketName,
       Key: key,
       Body: file.buffer,
-      ContentType: file.mimeType,
-      ACL: "public-read"
+      ContentType: file.mimeType
     });
 
     await this.s3Client.send(command);

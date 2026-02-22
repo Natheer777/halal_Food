@@ -11,14 +11,13 @@ export class MainCategoryController {
     private readonly getMainCategoriesWithSubcategoriesUseCase: GetMainCategoriesWithSubcategoriesUseCase,
     private readonly updateMainCategoryUseCase: UpdateMainCategoryUseCase,
     private readonly deleteMainCategoryUseCase: DeleteMainCategoryUseCase
-  ) {}
+  ) { }
 
   createMainCategory = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const file = req.file;
       if (!file) {
-        // Should be prevented by express-validator, but this keeps TypeScript happy
-        // and guards against misconfiguration.
+
         throw new Error("Image file is required.");
       }
 
@@ -33,7 +32,7 @@ export class MainCategoryController {
         image: uploadFile
       });
 
-      res.status(201).json(result);
+      res.status(201).json({ status: "success", data: result });
     } catch (error) {
       next(error);
     }
@@ -46,7 +45,7 @@ export class MainCategoryController {
   ): Promise<void> => {
     try {
       const result = await this.getMainCategoriesWithSubcategoriesUseCase.execute();
-      res.status(200).json(result);
+      res.status(200).json({ status: "success", data: result });
     } catch (error) {
       next(error);
     }
@@ -60,10 +59,10 @@ export class MainCategoryController {
 
       const image: UploadFile | null = file
         ? {
-            buffer: file.buffer,
-            mimeType: file.mimetype,
-            originalName: file.originalname
-          }
+          buffer: file.buffer,
+          mimeType: file.mimetype,
+          originalName: file.originalname
+        }
         : null;
 
       const result = await this.updateMainCategoryUseCase.execute({
@@ -72,10 +71,10 @@ export class MainCategoryController {
         image
       });
 
-      res.status(200).json(result);
+      res.status(200).json({ status: "success", data: result });
     } catch (error) {
       if (error instanceof MainCategoryNotFoundError) {
-        res.status(404).json({ message: error.message });
+        res.status(404).json({ status: "failed", message: error.message });
         return;
       }
 
@@ -91,7 +90,7 @@ export class MainCategoryController {
       res.status(204).send();
     } catch (error) {
       if (error instanceof MainCategoryNotFoundError) {
-        res.status(404).json({ message: error.message });
+        res.status(404).json({ status: "failed", message: error.message });
         return;
       }
 

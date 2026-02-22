@@ -9,6 +9,7 @@ export function handleValidationResult(req: Request, res: Response, next: NextFu
   }
 
   res.status(400).json({
+    status: "failed",
     message: "Validation failed.",
     errors: errors.array()
   });

@@ -28,13 +28,13 @@ async function bootstrap(): Promise<void> {
   const server = http.createServer(app);
 
   server.listen(port, () => {
-    // eslint-disable-next-line no-console
+
     console.log(`Server is running on port ${port}`);
   });
 }
 
 bootstrap().catch((error) => {
-  // eslint-disable-next-line no-console
+
   console.error("Failed to start server:", error);
   process.exit(1);
 });

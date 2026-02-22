@@ -32,7 +32,6 @@ export const updateMainCategoryValidation = [
     .isLength({ max: 100 })
     .withMessage("Name must be at most 100 characters."),
   body("image").custom((_, { req }) => {
-    // image is optional on update; if present, multer will have set req.file
     if (req.file && !req.file.mimetype.startsWith("image/")) {
       throw new Error("Image must be a valid image file.");
     }

@@ -25,15 +25,8 @@ async function runMigrations(): Promise<void> {
 
   try {
     await up001(pool);
-    // Extend here if more migrations are added (e.g. up002, up003, ...)
-    // in sequence to ensure deterministic ordering.
-    // Example:
-    // await up002(pool);
-
-    // eslint-disable-next-line no-console
     console.log("Database migrations executed successfully.");
   } catch (error) {
-    // eslint-disable-next-line no-console
     console.error("Error running database migrations:", error);
     process.exitCode = 1;
   } finally {
@@ -41,9 +34,7 @@ async function runMigrations(): Promise<void> {
   }
 }
 
-// Execute when run as a script
 runMigrations().catch((error) => {
-  // eslint-disable-next-line no-console
   console.error("Fatal error running migrations:", error);
   process.exit(1);
 });

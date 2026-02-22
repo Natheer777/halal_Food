@@ -28,7 +28,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/MainCategory"
+                $ref: "#/components/schemas/MainCategoryResponse"
         "400":
           description: Validation error
           content:
@@ -52,9 +52,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/MainCategoryWithSubcategories"
+                $ref: "#/components/schemas/MainCategoriesListResponse"
         "500":
           description: Internal server error
           content:
@@ -62,6 +60,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
 
+  /main-categories/{id}:
     put:
       tags:
         - Categories
@@ -95,7 +94,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/MainCategory"
+                $ref: "#/components/schemas/MainCategoryResponse"
         "400":
           description: Validation error
           content:
@@ -170,7 +169,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Subcategory"
+                $ref: "#/components/schemas/SubcategoryResponse"
         "400":
           description: Validation error
           content:
@@ -190,6 +189,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
 
+  /main-categories/{mainCategoryId}/subcategories/{subcategoryId}:
     put:
       tags:
         - Categories
@@ -222,7 +222,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Subcategory"
+                $ref: "#/components/schemas/SubcategoryResponse"
         "400":
           description: Validation error
           content:
@@ -363,14 +363,21 @@ components:
     ErrorResponse:
       type: object
       properties:
+        status:
+          type: string
+          example: failed
         message:
           type: string
       required:
+        - status
         - message
 
     ValidationErrorResponse:
       type: object
       properties:
+        status:
+          type: string
+          example: failed
         message:
           type: string
         errors:
@@ -385,4 +392,43 @@ components:
               location:
                 type: string
       required:
+        - status
         - message
+
+    MainCategoryResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        data:
+          $ref: "#/components/schemas/MainCategory"
+      required:
+        - status
+        - data
+
+    MainCategoriesListResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/MainCategoryWithSubcategories"
+      required:
+        - status
+        - data
+
+    SubcategoryResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        data:
+          $ref: "#/components/schemas/Subcategory"
+      required:
+        - status
+        - data

@@ -16,19 +16,14 @@ export function createApp(): Application {
 
   app.use("/api", createCategoryRouter());
 
-  // Basic health endpoint
   app.get("/health", (_req: Request, res: Response) => {
-    res.status(200).json({ status: "ok" });
+    res.status(200).json({ status: "success", message: "Server is healthy" });
   });
 
-  // Global error handler
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
-    // eslint-disable-next-line no-console
     console.error(err);
-    res.status(500).json({ message: "Internal server error." });
+    res.status(500).json({ status: "failed", message: "Internal server error." });
   });
 
   return app;
 }
-
