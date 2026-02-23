@@ -3,6 +3,7 @@ import path from "path";
 import swaggerUi from "swagger-ui-express";
 import YAML from "yamljs";
 import { createCategoryRouter } from "@presentation/routes/categoryRoutes";
+import { createProductRouter } from "@presentation/routes/productRoutes";
 
 export function createApp(): Application {
   const app = express();
@@ -15,6 +16,7 @@ export function createApp(): Application {
   app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
   app.use("/api", createCategoryRouter());
+  app.use("/api", createProductRouter());
 
   app.get("/health", (_req: Request, res: Response) => {
     res.status(200).json({ status: "success", message: "Server is healthy" });

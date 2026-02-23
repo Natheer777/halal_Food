@@ -6,5 +6,7 @@ export interface ISubcategoryRepository {
   update(subcategory: Subcategory): Promise<Subcategory>;
   delete(id: string): Promise<void>;
   findById(id: string): Promise<Subcategory | null>;
+  findByName(name: string): Promise<Subcategory | null>;
+  findWithPagination(page: number, limit: number): Promise<{ subcategories: Subcategory[], total: number }>;
 }
 

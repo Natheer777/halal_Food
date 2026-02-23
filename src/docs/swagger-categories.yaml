@@ -44,15 +44,28 @@ paths:
     get:
       tags:
         - Categories
-      summary: List main categories with their subcategories
+      summary: List main categories with their subcategories (paginated)
       operationId: getMainCategoriesWithSubcategories
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+          description: Number of items per page
       responses:
         "200":
-          description: List of main categories with subcategories
+          description: Paginated list of main categories with subcategories
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/MainCategoriesListResponse"
+                $ref: "#/components/schemas/PaginatedMainCategoriesResponse"
         "500":
           description: Internal server error
           content:
@@ -272,6 +285,39 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
 
+  /subcategories:
+    get:
+      tags:
+        - Categories
+      summary: Get subcategories with pagination
+      operationId: getSubcategories
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+          description: Number of items per page
+      responses:
+        "200":
+          description: Paginated list of subcategories
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedSubcategoriesResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
 components:
   schemas:
     MainCategory:
@@ -335,7 +381,6 @@ components:
             properties:
               id:
                 type: string
-                format: uuid
               name:
                 type: string
               createdAt:
@@ -407,16 +452,27 @@ components:
         - status
         - data
 
-    MainCategoriesListResponse:
+    PaginatedMainCategoriesResponse:
       type: object
       properties:
         status:
           type: string
           example: success
         data:
-          type: array
-          items:
-            $ref: "#/components/schemas/MainCategoryWithSubcategories"
+          type: object
+          properties:
+            categories:
+              type: array
+              items:
+                $ref: "#/components/schemas/MainCategoryWithSubcategories"
+            total:
+              type: integer
+            page:
+              type: integer
+            limit:
+              type: integer
+            totalPages:
+              type: integer
       required:
         - status
         - data
@@ -429,6 +485,31 @@ components:
           example: success
         data:
           $ref: "#/components/schemas/Subcategory"
+      required:
+        - status
+        - data
+
+    PaginatedSubcategoriesResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        data:
+          type: object
+          properties:
+            subcategories:
+              type: array
+              items:
+                $ref: "#/components/schemas/Subcategory"
+            total:
+              type: integer
+            page:
+              type: integer
+            limit:
+              type: integer
+            totalPages:
+              type: integer
       required:
         - status
         - data

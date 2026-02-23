@@ -6,5 +6,6 @@ export interface IMainCategoryRepository {
   findAll(): Promise<MainCategory[]>;
   update(mainCategory: MainCategory): Promise<MainCategory>;
   delete(id: string): Promise<void>;
+  findWithPagination(page: number, limit: number): Promise<{ categories: MainCategory[], total: number }>;
 }
 

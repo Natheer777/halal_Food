@@ -3,7 +3,7 @@ import { Subcategory } from "@domain/entities/Subcategory";
 import { ISubcategoryRepository } from "@domain/repositories/ISubcategoryRepository";
 
 export class PgSubcategoryRepository implements ISubcategoryRepository {
-  constructor(private readonly pool: Pool) {}
+  constructor(private readonly pool: Pool) { }
 
   async create(subcategory: Subcategory): Promise<Subcategory> {
     const query = `
@@ -100,6 +100,51 @@ export class PgSubcategoryRepository implements ISubcategoryRepository {
       `,
       [id]
     );
+  }
+
+  async findByName(name: string): Promise<Subcategory | null> {
+    const result = await this.pool.query(
+      `
+        SELECT id, main_category_id, name, created_at
+        FROM subcategories
+        WHERE name = $1;
+      `,
+      [name]
+    );
+
+    const row = result.rows[0];
+    if (!row) {
+      return null;
+    }
+
+    return {
+      id: row.id,
+      mainCategoryId: row.main_category_id,
+      name: row.name,
+      createdAt: row.created_at
+    };
+  }
+
+  async findWithPagination(page: number, limit: number): Promise<{ subcategories: Subcategory[], total: number }> {
+    const offset = (page - 1) * limit;
+
+    const countQuery = `SELECT COUNT(*) FROM subcategories;`;
+    const subcategoriesQuery = `
+      SELECT id, main_category_id as "mainCategoryId", name, created_at as "createdAt"
+      FROM subcategories
+      ORDER BY created_at ASC
+      LIMIT $1 OFFSET $2;
+    `;
+
+    const [countResult, subcategoriesResult] = await Promise.all([
+      this.pool.query(countQuery),
+      this.pool.query(subcategoriesQuery, [limit, offset])
+    ]);
+
+    return {
+      subcategories: subcategoriesResult.rows,
+      total: parseInt(countResult.rows[0].count, 10)
+    };
   }
 }
 

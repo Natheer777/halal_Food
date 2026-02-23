@@ -11,9 +11,65 @@ servers:
 tags:
   - name: Categories
     description: Main categories and subcategories
+  - name: Products
+    description: Product management
 
 paths:
-  $ref: "./swagger-categories.yaml#/paths"
+  /main-categories:
+    $ref: "./swagger-categories.yaml#/paths/~1main-categories"
+  '/main-categories/{id}':
+    $ref: "./swagger-categories.yaml#/paths/~1main-categories~1{id}"
+  '/main-categories/{mainCategoryId}/subcategories':
+    $ref: "./swagger-categories.yaml#/paths/~1main-categories~1{mainCategoryId}~1subcategories"
+  '/main-categories/{mainCategoryId}/subcategories/{subcategoryId}':
+    $ref: "./swagger-categories.yaml#/paths/~1main-categories~1{mainCategoryId}~1subcategories~1{subcategoryId}"
+  '/subcategories/{subcategoryId}':
+    $ref: "./swagger-categories.yaml#/paths/~1subcategories~1{subcategoryId}"
+  /products:
+    $ref: "./swagger-products.yaml#/paths/~1products"
+  '/products/{id}':
+    $ref: "./swagger-products.yaml#/paths/~1products~1{id}"
+  /products/visible:
+    $ref: "./swagger-products.yaml#/paths/~1products~1visible"
+  /subcategories:
+    $ref: "./swagger-categories.yaml#/paths/~1subcategories"
 
 components:
-  $ref: "./swagger-categories.yaml#/components"
+  schemas:
+    # Categories Schemas
+    MainCategory:
+      $ref: "./swagger-categories.yaml#/components/schemas/MainCategory"
+    Subcategory:
+      $ref: "./swagger-categories.yaml#/components/schemas/Subcategory"
+    MainCategoryWithSubcategories:
+      $ref: "./swagger-categories.yaml#/components/schemas/MainCategoryWithSubcategories"
+    CreateSubcategoryRequest:
+      $ref: "./swagger-categories.yaml#/components/schemas/CreateSubcategoryRequest"
+    ErrorResponse:
+      $ref: "./swagger-categories.yaml#/components/schemas/ErrorResponse"
+    ValidationErrorResponse:
+      $ref: "./swagger-categories.yaml#/components/schemas/ValidationErrorResponse"
+    MainCategoryResponse:
+      $ref: "./swagger-categories.yaml#/components/schemas/MainCategoryResponse"
+    PaginatedMainCategoriesResponse:
+      $ref: "./swagger-categories.yaml#/components/schemas/PaginatedMainCategoriesResponse"
+    SubcategoryResponse:
+      $ref: "./swagger-categories.yaml#/components/schemas/SubcategoryResponse"
+    PaginatedSubcategoriesResponse:
+      $ref: "./swagger-categories.yaml#/components/schemas/PaginatedSubcategoriesResponse"
+    
+    # Products Schemas
+    ProductStatus:
+      $ref: "./swagger-products.yaml#/components/schemas/ProductStatus"
+    Product:
+      $ref: "./swagger-products.yaml#/components/schemas/Product"
+    CreateProductRequest:
+      $ref: "./swagger-products.yaml#/components/schemas/CreateProductRequest"
+    UpdateProductRequest:
+      $ref: "./swagger-products.yaml#/components/schemas/UpdateProductRequest"
+    ProductResponse:
+      $ref: "./swagger-products.yaml#/components/schemas/ProductResponse"
+    ProductsListResponse:
+      $ref: "./swagger-products.yaml#/components/schemas/ProductsListResponse"
+    PaginatedProductsResponse:
+      $ref: "./swagger-products.yaml#/components/schemas/PaginatedProductsResponse"

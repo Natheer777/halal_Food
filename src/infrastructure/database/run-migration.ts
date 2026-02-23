@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import path from "path";
 import { getPgPool, closePgPool } from "@infrastructure/database/pgClient";
 import { up as up001 } from "@infrastructure/database/migrations/001_create_main_and_subcategories";
+import { up as up002 } from "@infrastructure/database/migrations/002_create_products";
 
 function loadEnvironment(): void {
   const nodeEnv = process.env.NODE_ENV ?? "development";
@@ -10,8 +11,8 @@ function loadEnvironment(): void {
     nodeEnv === "development"
       ? ".env.development"
       : nodeEnv === "production"
-      ? ".env.production"
-      : `.env.${nodeEnv}`;
+        ? ".env.production"
+        : `.env.${nodeEnv}`;
 
   dotenv.config({
     path: path.resolve(__dirname, "..", "..", "..", envFile)
@@ -25,6 +26,7 @@ async function runMigrations(): Promise<void> {
 
   try {
     await up001(pool);
+    await up002(pool);
     console.log("Database migrations executed successfully.");
   } catch (error) {
     console.error("Error running database migrations:", error);

@@ -15,16 +15,31 @@ export interface MainCategoryWithSubcategories {
   }>;
 }
 
+export interface GetMainCategoriesWithSubcategoriesResponse {
+  categories: MainCategoryWithSubcategories[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
 export class GetMainCategoriesWithSubcategoriesUseCase {
   constructor(
     private readonly mainCategoryRepository: IMainCategoryRepository,
     private readonly subcategoryRepository: ISubcategoryRepository
-  ) {}
+  ) { }
 
-  async execute(): Promise<MainCategoryWithSubcategories[]> {
-    const mainCategories: MainCategory[] = await this.mainCategoryRepository.findAll();
+  async execute(page: number, limit: number): Promise<GetMainCategoriesWithSubcategoriesResponse> {
+    const { categories: mainCategories, total } = await this.mainCategoryRepository.findWithPagination(page, limit);
+
     if (mainCategories.length === 0) {
-      return [];
+      return {
+        categories: [],
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit)
+      };
     }
 
     const subcategories: Subcategory[] = await this.subcategoryRepository.findByMainCategoryIds(
@@ -39,7 +54,7 @@ export class GetMainCategoriesWithSubcategoriesUseCase {
       subcategoriesByMainCategory[sub.mainCategoryId].push(sub);
     }
 
-    return mainCategories.map((category) => ({
+    const results = mainCategories.map((category) => ({
       id: category.id,
       name: category.name,
       imageUrl: category.imageUrl,
@@ -50,6 +65,14 @@ export class GetMainCategoriesWithSubcategoriesUseCase {
         createdAt: sub.createdAt
       }))
     }));
+
+    return {
+      categories: results,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit)
+    };
   }
 }
 

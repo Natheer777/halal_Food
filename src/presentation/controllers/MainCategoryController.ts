@@ -39,12 +39,15 @@ export class MainCategoryController {
   };
 
   getMainCategoriesWithSubcategories = async (
-    _req: Request,
+    req: Request,
     res: Response,
     next: NextFunction
   ): Promise<void> => {
     try {
-      const result = await this.getMainCategoriesWithSubcategoriesUseCase.execute();
+      const page = parseInt(req.query.page as string || "1", 10);
+      const limit = parseInt(req.query.limit as string || "10", 10);
+
+      const result = await this.getMainCategoriesWithSubcategoriesUseCase.execute(page, limit);
       res.status(200).json({ status: "success", data: result });
     } catch (error) {
       next(error);

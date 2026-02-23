@@ -8,12 +8,14 @@ import {
   SubcategoryNotFoundError
 } from "@application/use-cases/subcategory/UpdateSubcategoryUseCase";
 import { DeleteSubcategoryUseCase } from "@application/use-cases/subcategory/DeleteSubcategoryUseCase";
+import { GetSubcategoriesUseCase } from "@application/use-cases/subcategory/GetSubcategoriesUseCase";
 
 export class SubcategoryController {
   constructor(
     private readonly createSubcategoryUseCase: CreateSubcategoryUseCase,
     private readonly updateSubcategoryUseCase: UpdateSubcategoryUseCase,
-    private readonly deleteSubcategoryUseCase: DeleteSubcategoryUseCase
+    private readonly deleteSubcategoryUseCase: DeleteSubcategoryUseCase,
+    private readonly getSubcategoriesUseCase: GetSubcategoriesUseCase
   ) { }
 
   createSubcategory = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -84,6 +86,18 @@ export class SubcategoryController {
         return;
       }
 
+      next(error);
+    }
+  };
+
+  getSubcategories = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const page = parseInt(req.query.page as string || "1", 10);
+      const limit = parseInt(req.query.limit as string || "10", 10);
+
+      const result = await this.getSubcategoriesUseCase.execute({ page, limit });
+      res.status(200).json({ status: "success", data: result });
+    } catch (error) {
       next(error);
     }
   };

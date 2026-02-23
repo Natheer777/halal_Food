@@ -29,7 +29,8 @@ export function createCategoryRouter(): Router {
   const subcategoryController = new SubcategoryController(
     container.createSubcategoryUseCase,
     container.updateSubcategoryUseCase,
-    container.deleteSubcategoryUseCase
+    container.deleteSubcategoryUseCase,
+    container.getSubcategoriesUseCase
   );
 
   router.post(
@@ -75,6 +76,11 @@ export function createCategoryRouter(): Router {
   router.delete(
     "/subcategories/:subcategoryId",
     subcategoryController.deleteSubcategory
+  );
+
+  router.get(
+    "/subcategories",
+    subcategoryController.getSubcategories
   );
 
   return router;

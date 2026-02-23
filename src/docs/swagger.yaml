@@ -9,6 +9,8 @@ servers:
 tags:
   - name: Categories
     description: Main categories and subcategories
+  - name: Products
+    description: Product management
 paths:
   /main-categories:
     post:
@@ -55,15 +57,28 @@ paths:
     get:
       tags:
         - Categories
-      summary: List main categories with their subcategories
+      summary: List main categories with their subcategories (paginated)
       operationId: getMainCategoriesWithSubcategories
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+          description: Number of items per page
       responses:
         '200':
-          description: List of main categories with subcategories
+          description: Paginated list of main categories with subcategories
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MainCategoriesListResponse'
+                $ref: '#/components/schemas/PaginatedMainCategoriesResponse'
         '500':
           description: Internal server error
           content:
@@ -277,6 +292,259 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /products:
+    post:
+      tags:
+        - Products
+      summary: Create a new product
+      operationId: createProduct
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateProductRequest'
+      responses:
+        '201':
+          description: Product created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: failed
+                  message:
+                    type: string
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        msg:
+                          type: string
+                        param:
+                          type: string
+                        location:
+                          type: string
+                required:
+                  - status
+                  - message
+        '404':
+          description: Subcategory not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1products/get/responses/500/content/application~1json/schema'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1products/get/responses/500/content/application~1json/schema'
+    get:
+      tags:
+        - Products
+      summary: List all products
+      operationId: getAllProducts
+      responses:
+        '200':
+          description: List of products
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductsListResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: failed
+                  message:
+                    type: string
+                required:
+                  - status
+                  - message
+  '/products/{id}':
+    get:
+      tags:
+        - Products
+      summary: Get product by ID
+      operationId: getProductById
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID of the product
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Product details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductResponse'
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1products/get/responses/500/content/application~1json/schema'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1products/get/responses/500/content/application~1json/schema'
+    put:
+      tags:
+        - Products
+      summary: Update a product
+      operationId: updateProduct
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID of the product
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UpdateProductRequest'
+      responses:
+        '200':
+          description: Product updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1products/post/responses/400/content/application~1json/schema'
+        '404':
+          description: Product or Subcategory not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1products/get/responses/500/content/application~1json/schema'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1products/get/responses/500/content/application~1json/schema'
+    delete:
+      tags:
+        - Products
+      summary: Delete a product
+      operationId: deleteProduct
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID of the product
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Product deleted successfully
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1products/get/responses/500/content/application~1json/schema'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1products/get/responses/500/content/application~1json/schema'
+  /products/visible:
+    get:
+      tags:
+        - Products
+      summary: Get visible products with pagination
+      operationId: getVisibleProducts
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+          description: Number of items per page
+      responses:
+        '200':
+          description: Paginated list of visible products
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedProductsResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1products/get/responses/500/content/application~1json/schema'
+  /subcategories:
+    get:
+      tags:
+        - Categories
+      summary: Get subcategories with pagination
+      operationId: getSubcategories
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+          description: Number of items per page
+      responses:
+        '200':
+          description: Paginated list of subcategories
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedSubcategoriesResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
     MainCategory:
@@ -338,7 +606,6 @@ components:
             properties:
               id:
                 type: string
-                format: uuid
               name:
                 type: string
               createdAt:
@@ -405,16 +672,27 @@ components:
       required:
         - status
         - data
-    MainCategoriesListResponse:
+    PaginatedMainCategoriesResponse:
       type: object
       properties:
         status:
           type: string
           example: success
         data:
-          type: array
-          items:
-            $ref: '#/components/schemas/MainCategoryWithSubcategories'
+          type: object
+          properties:
+            categories:
+              type: array
+              items:
+                $ref: '#/components/schemas/MainCategoryWithSubcategories'
+            total:
+              type: integer
+            page:
+              type: integer
+            limit:
+              type: integer
+            totalPages:
+              type: integer
       required:
         - status
         - data
@@ -429,3 +707,158 @@ components:
       required:
         - status
         - data
+    PaginatedSubcategoriesResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        data:
+          type: object
+          properties:
+            subcategories:
+              type: array
+              items:
+                $ref: '#/components/schemas/Subcategory'
+            total:
+              type: integer
+            page:
+              type: integer
+            limit:
+              type: integer
+            totalPages:
+              type: integer
+      required:
+        - status
+        - data
+    ProductStatus:
+      type: string
+      enum:
+        - visible
+        - hidden
+    Product:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        subcategoryName:
+          type: string
+        manufacturingLocation:
+          type: string
+        availableQuantity:
+          type: integer
+        price:
+          type: number
+        size:
+          type: string
+        description:
+          type: string
+        status:
+          $ref: '#/components/schemas/ProductStatus'
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - subcategoryName
+        - manufacturingLocation
+        - availableQuantity
+        - price
+        - size
+        - status
+        - createdAt
+    CreateProductRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        subcategoryName:
+          type: string
+        manufacturingLocation:
+          type: string
+        availableQuantity:
+          type: integer
+        price:
+          type: number
+        size:
+          type: string
+        description:
+          type: string
+        status:
+          $ref: '#/components/schemas/ProductStatus'
+      required:
+        - name
+        - subcategoryName
+        - manufacturingLocation
+        - availableQuantity
+        - price
+        - size
+        - status
+    UpdateProductRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        subcategoryName:
+          type: string
+        manufacturingLocation:
+          type: string
+        availableQuantity:
+          type: integer
+        price:
+          type: number
+        size:
+          type: string
+        description:
+          type: string
+        status:
+          $ref: '#/components/schemas/ProductStatus'
+    ProductResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        data:
+          $ref: '#/components/schemas/Product'
+      required:
+        - status
+        - data
+    ProductsListResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Product'
+      required:
+        - status
+        - data
+    PaginatedProductsResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        data:
+          type: object
+          properties:
+            products:
+              type: array
+              items:
+                $ref: '#/components/schemas/Product'
+            total:
+              type: integer
+            page:
+              type: integer
+            limit:
+              type: integer
+            totalPages:
+              type: integer
