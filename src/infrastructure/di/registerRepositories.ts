@@ -5,11 +5,14 @@ import { PgProductRepository } from "@infrastructure/repositories/PgProductRepos
 import { IMainCategoryRepository } from "@domain/repositories/IMainCategoryRepository";
 import { ISubcategoryRepository } from "@domain/repositories/ISubcategoryRepository";
 import { IProductRepository } from "@domain/repositories/IProductRepository";
+import { IOfferRepository } from "@domain/repositories/IOfferRepository";
+import { PgOfferRepository } from "@infrastructure/repositories/PgOfferRepository";
 
 export interface RegisteredRepositories {
   mainCategoryRepository: IMainCategoryRepository;
   subcategoryRepository: ISubcategoryRepository;
   productRepository: IProductRepository;
+  offerRepository: IOfferRepository;
 }
 
 export function registerRepositories(): RegisteredRepositories {
@@ -22,7 +25,8 @@ export function registerRepositories(): RegisteredRepositories {
   return {
     mainCategoryRepository,
     subcategoryRepository,
-    productRepository
+    productRepository,
+    offerRepository: new PgOfferRepository(pool)
   };
 }
 

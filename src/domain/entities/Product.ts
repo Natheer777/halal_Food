@@ -13,5 +13,6 @@ export interface Product {
     size: string;
     description?: string;
     status: ProductStatus;
+    images: string[];
     createdAt: Date;
 }

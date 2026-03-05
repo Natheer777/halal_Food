@@ -8,10 +8,19 @@ export function handleValidationResult(req: Request, res: Response, next: NextFu
     return;
   }
 
+  const errorArray = errors.array();
+  const uniqueErrors = errorArray.reduce((acc: any[], error: any) => {
+    const existingError = acc.find(e => e.path === error.path);
+    if (!existingError) {
+      acc.push(error);
+    }
+    return acc;
+  }, []);
+
   res.status(400).json({
     status: "failed",
     message: "Validation failed.",
-    errors: errors.array()
+    errors: uniqueErrors
   });
 }
 

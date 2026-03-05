@@ -7,12 +7,16 @@ info:
 servers:
   - url: http://localhost:3000/api
     description: API base path
+  - url: https://halal-food.onrender.com/api
+    description: development server
 
 tags:
   - name: Categories
     description: Main categories and subcategories
   - name: Products
     description: Product management
+  - name: Offers
+    description: Special offers and discounts
 
 paths:
   /main-categories:
@@ -33,6 +37,14 @@ paths:
     $ref: "./swagger-products.yaml#/paths/~1products~1visible"
   /subcategories:
     $ref: "./swagger-categories.yaml#/paths/~1subcategories"
+  /offers:
+    $ref: "./swagger-offers.yaml#/paths/~1offers"
+  '/offers/product/{productId}':
+    $ref: "./swagger-offers.yaml#/paths/~1offers~1product~1{productId}"
+  /offers/active:
+    $ref: "./swagger-offers.yaml#/paths/~1offers~1active"
+  '/offers/{id}':
+    $ref: "./swagger-offers.yaml#/paths/~1offers~1{id}"
 
 components:
   schemas:
@@ -73,3 +85,15 @@ components:
       $ref: "./swagger-products.yaml#/components/schemas/ProductsListResponse"
     PaginatedProductsResponse:
       $ref: "./swagger-products.yaml#/components/schemas/PaginatedProductsResponse"
+
+    # Offers Schemas
+    Offer:
+      $ref: "./swagger-offers.yaml#/components/schemas/Offer"
+    CreateOfferRequest:
+      $ref: "./swagger-offers.yaml#/components/schemas/CreateOfferRequest"
+    OfferResponse:
+      $ref: "./swagger-offers.yaml#/components/schemas/OfferResponse"
+    OffersResponse:
+      $ref: "./swagger-offers.yaml#/components/schemas/OffersResponse"
+    ActiveOffersResponse:
+      $ref: "./swagger-offers.yaml#/components/schemas/ActiveOffersResponse"

@@ -45,5 +45,29 @@ export class S3FileStorageService implements IFileStorageService {
 
     return `${endpoint}/${key}`;
   }
+
+  async uploadProductImages(files: UploadFile[]): Promise<string[]> {
+    const uploadPromises = files.map(async (file) => {
+      const extension = path.extname(file.originalName) || ".jpg";
+      const key = `products/${randomUUID()}${extension}`;
+
+      const command = new PutObjectCommand({
+        Bucket: this.bucketName,
+        Key: key,
+        Body: file.buffer,
+        ContentType: file.mimeType
+      });
+
+      await this.s3Client.send(command);
+
+      const endpoint =
+        process.env.AWS_S3_PUBLIC_ENDPOINT ??
+        `https://${this.bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com`;
+
+      return `${endpoint}/${key}`;
+    });
+
+    return Promise.all(uploadPromises);
+  }
 }
 

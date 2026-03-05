@@ -5,6 +5,7 @@ import { DeleteProductUseCase } from "@application/use-cases/product/DeleteProdu
 import { GetProductUseCase } from "@application/use-cases/product/GetProductUseCase";
 import { GetAllProductsUseCase } from "@application/use-cases/product/GetAllProductsUseCase";
 import { GetVisibleProductsUseCase } from "@application/use-cases/product/GetVisibleProductsUseCase";
+import { UploadFile } from "@application/services/IFileStorageService";
 
 export class ProductController {
     constructor(
@@ -18,7 +19,18 @@ export class ProductController {
 
     createProduct = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
-            const result = await this.createProductUseCase.execute(req.body);
+            const files = req.files as Express.Multer.File[];
+            
+            const images: UploadFile[] = files ? files.map(file => ({
+                buffer: file.buffer,
+                mimeType: file.mimetype,
+                originalName: file.originalname
+            })) : [];
+
+            const result = await this.createProductUseCase.execute({
+                ...req.body,
+                images
+            });
             res.status(201).json({ status: "success", data: result });
         } catch (error) {
             if (error instanceof Error && error.message.includes("not found")) {
@@ -33,7 +45,21 @@ export class ProductController {
         try {
             const { id: idParam } = req.params;
             const id = Array.isArray(idParam) ? idParam[0] : idParam;
-            const result = await this.updateProductUseCase.execute({ ...req.body, id });
+            const files = req.files as Express.Multer.File[];
+            
+            const images: UploadFile[] | undefined = files && files.length > 0 
+                ? files.map(file => ({
+                    buffer: file.buffer,
+                    mimeType: file.mimetype,
+                    originalName: file.originalname
+                }))
+                : undefined;
+
+            const result = await this.updateProductUseCase.execute({ 
+                ...req.body, 
+                id,
+                images
+            });
             res.status(200).json({ status: "success", data: result });
         } catch (error) {
             if (error instanceof Error && error.message.includes("not found")) {

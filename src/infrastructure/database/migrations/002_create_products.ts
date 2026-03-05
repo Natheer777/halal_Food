@@ -20,6 +20,7 @@ export async function up(pool: Pool): Promise<void> {
       size TEXT NOT NULL,
       description TEXT,
       status product_status NOT NULL DEFAULT 'visible',
+      images JSONB DEFAULT '[]'::jsonb,
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
   `);

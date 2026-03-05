@@ -3,6 +3,7 @@ import path from "path";
 import { getPgPool, closePgPool } from "@infrastructure/database/pgClient";
 import { up as up001 } from "@infrastructure/database/migrations/001_create_main_and_subcategories";
 import { up as up002 } from "@infrastructure/database/migrations/002_create_products";
+import { up as up003 } from "@infrastructure/database/migrations/003_create_offers";
 
 function loadEnvironment(): void {
   const nodeEnv = process.env.NODE_ENV ?? "development";
@@ -27,6 +28,7 @@ async function runMigrations(): Promise<void> {
   try {
     await up001(pool);
     await up002(pool);
+    await up003(pool);
     console.log("Database migrations executed successfully.");
   } catch (error) {
     console.error("Error running database migrations:", error);

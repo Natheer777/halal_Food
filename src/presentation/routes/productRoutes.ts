@@ -1,4 +1,5 @@
 import { Router } from "express";
+import multer from "multer";
 import { getContainer } from "@infrastructure/di/container";
 import { ProductController } from "@presentation/controllers/ProductController";
 import {
@@ -7,6 +8,8 @@ import {
     productIdValidation
 } from "@presentation/validators/productValidators";
 import { handleValidationResult } from "@presentation/validators/validationResultHandler";
+
+const upload = multer({ storage: multer.memoryStorage() });
 
 export function createProductRouter(): Router {
     const router = Router();
@@ -23,6 +26,7 @@ export function createProductRouter(): Router {
 
     router.post(
         "/products",
+        upload.array("images", 10),
         createProductValidation,
         handleValidationResult,
         productController.createProduct
@@ -47,6 +51,7 @@ export function createProductRouter(): Router {
 
     router.put(
         "/products/:id",
+        upload.array("images", 10),
         updateProductValidation,
         handleValidationResult,
         productController.updateProduct

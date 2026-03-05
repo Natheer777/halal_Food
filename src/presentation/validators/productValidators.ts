@@ -2,41 +2,54 @@ import { body, param } from "express-validator";
 
 export const createProductValidation = [
     body("name")
-        .isString()
-        .withMessage("Name must be a string.")
         .trim()
         .notEmpty()
-        .withMessage("Name is required."),
+        .withMessage("Name is required.")
+        .bail()
+        .isString()
+        .withMessage("Name must be a string."),
     body("subcategoryName")
-        .isString()
-        .withMessage("Subcategory name must be a string.")
         .trim()
         .notEmpty()
-        .withMessage("Subcategory name is required."),
+        .withMessage("Subcategory name is required.")
+        .bail()
+        .isString()
+        .withMessage("Subcategory name must be a string."),
     body("manufacturingLocation")
-        .isString()
-        .withMessage("Manufacturing location must be a string.")
         .trim()
         .notEmpty()
-        .withMessage("Manufacturing location is required."),
+        .withMessage("Manufacturing location is required.")
+        .bail()
+        .isString()
+        .withMessage("Manufacturing location must be a string."),
     body("availableQuantity")
+        .notEmpty()
+        .withMessage("Available quantity is required.")
+        .bail()
         .isInt({ min: 0 })
         .withMessage("Available quantity must be a non-negative integer."),
     body("price")
+        .notEmpty()
+        .withMessage("Price is required.")
+        .bail()
         .isFloat({ min: 0 })
         .withMessage("Price must be a non-negative number."),
     body("size")
-        .isString()
-        .withMessage("Size must be a string.")
         .trim()
         .notEmpty()
-        .withMessage("Size is required."),
+        .withMessage("Size is required.")
+        .bail()
+        .isString()
+        .withMessage("Size must be a string."),
     body("description")
-        .optional()
+        .optional({ values: "falsy" })
         .isString()
         .withMessage("Description must be a string.")
         .trim(),
     body("status")
+        .notEmpty()
+        .withMessage("Status is required.")
+        .bail()
         .isIn(["visible", "hidden"])
         .withMessage("Status must be either 'visible' or 'hidden'.")
 ];

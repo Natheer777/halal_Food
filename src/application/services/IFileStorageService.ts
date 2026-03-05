@@ -6,5 +6,6 @@ export interface UploadFile {
 
 export interface IFileStorageService {
   uploadCategoryImage(file: UploadFile): Promise<string>;
+  uploadProductImages(files: UploadFile[]): Promise<string[]>;
 }
 

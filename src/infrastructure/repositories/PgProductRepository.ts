@@ -10,16 +10,16 @@ export class PgProductRepository implements IProductRepository {
       WITH inserted AS (
         INSERT INTO products (
           id, name, subcategory_id, manufacturing_location, 
-          available_quantity, price, size, description, status, created_at
+          available_quantity, price, size, description, status, images, created_at
         )
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
         RETURNING *
       )
       SELECT i.id, i.name, 
              s.name as "subcategoryName",
              i.manufacturing_location as "manufacturingLocation", 
              i.available_quantity as "availableQuantity", 
-             i.price, i.size, i.description, i.status, i.created_at as "createdAt"
+             i.price, i.size, i.description, i.status, i.images, i.created_at as "createdAt"
       FROM inserted i
       JOIN subcategories s ON i.subcategory_id = s.id;
     `;
@@ -34,6 +34,7 @@ export class PgProductRepository implements IProductRepository {
       product.size,
       product.description,
       product.status,
+      JSON.stringify(product.images),
       product.createdAt
     ];
 
@@ -47,7 +48,7 @@ export class PgProductRepository implements IProductRepository {
              s.name as "subcategoryName",
              p.manufacturing_location as "manufacturingLocation", 
              p.available_quantity as "availableQuantity", 
-             p.price, p.size, p.description, p.status, p.created_at as "createdAt"
+             p.price, p.size, p.description, p.status, p.images, p.created_at as "createdAt"
       FROM products p
       JOIN subcategories s ON p.subcategory_id = s.id
       WHERE p.id = $1;
@@ -69,7 +70,7 @@ export class PgProductRepository implements IProductRepository {
              s.name as "subcategoryName",
              p.manufacturing_location as "manufacturingLocation", 
              p.available_quantity as "availableQuantity", 
-             p.price, p.size, p.description, p.status, p.created_at as "createdAt"
+             p.price, p.size, p.description, p.status, p.images, p.created_at as "createdAt"
       FROM products p
       JOIN subcategories s ON p.subcategory_id = s.id
       ORDER BY p.created_at DESC;
@@ -90,7 +91,8 @@ export class PgProductRepository implements IProductRepository {
             price = $6,
             size = $7,
             description = $8,
-            status = $9
+            status = $9,
+            images = $10
         WHERE id = $1
         RETURNING *
       )
@@ -98,7 +100,7 @@ export class PgProductRepository implements IProductRepository {
              s.name as "subcategoryName",
              u.manufacturing_location as "manufacturingLocation", 
              u.available_quantity as "availableQuantity", 
-             u.price, u.size, u.description, u.status, u.created_at as "createdAt"
+             u.price, u.size, u.description, u.status, u.images, u.created_at as "createdAt"
       FROM updated u
       JOIN subcategories s ON u.subcategory_id = s.id;
     `;
@@ -112,7 +114,8 @@ export class PgProductRepository implements IProductRepository {
       product.price,
       product.size,
       product.description,
-      product.status
+      product.status,
+      JSON.stringify(product.images)
     ];
 
     const result = await this.pool.query(query, values);
@@ -130,7 +133,7 @@ export class PgProductRepository implements IProductRepository {
              s.name as "subcategoryName",
              p.manufacturing_location as "manufacturingLocation", 
              p.available_quantity as "availableQuantity", 
-             p.price, p.size, p.description, p.status, p.created_at as "createdAt"
+             p.price, p.size, p.description, p.status, p.images, p.created_at as "createdAt"
       FROM products p
       JOIN subcategories s ON p.subcategory_id = s.id
       WHERE p.subcategory_id = $1
@@ -150,7 +153,7 @@ export class PgProductRepository implements IProductRepository {
              s.name as "subcategoryName",
              p.manufacturing_location as "manufacturingLocation", 
              p.available_quantity as "availableQuantity", 
-             p.price, p.size, p.description, p.status, p.created_at as "createdAt"
+             p.price, p.size, p.description, p.status, p.images, p.created_at as "createdAt"
       FROM products p
       JOIN subcategories s ON p.subcategory_id = s.id
       WHERE p.status = 'visible'

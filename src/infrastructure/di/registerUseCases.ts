@@ -12,6 +12,12 @@ import { DeleteProductUseCase } from "@application/use-cases/product/DeleteProdu
 import { GetProductUseCase } from "@application/use-cases/product/GetProductUseCase";
 import { GetAllProductsUseCase } from "@application/use-cases/product/GetAllProductsUseCase";
 import { GetVisibleProductsUseCase } from "@application/use-cases/product/GetVisibleProductsUseCase";
+import { CreateOfferUseCase } from "@application/use-cases/offer/CreateOfferUseCase";
+import { GetOffersUseCase } from "@application/use-cases/offer/GetOffersUseCase";
+import { UpdateOfferUseCase } from "@application/use-cases/offer/UpdateOfferUseCase";
+import { DeleteOfferUseCase } from "@application/use-cases/offer/DeleteOfferUseCase";
+import { GetOfferByProductIdUseCase } from "@application/use-cases/offer/GetOfferByProductIdUseCase";
+import { GetActiveOffersUseCase } from "@application/use-cases/offer/GetActiveOffersUseCase";
 import { RegisteredRepositories } from "@infrastructure/di/registerRepositories";
 import { RegisteredServices } from "@infrastructure/di/registerServices";
 
@@ -30,6 +36,12 @@ export interface RegisteredUseCases {
   getProductUseCase: GetProductUseCase;
   getAllProductsUseCase: GetAllProductsUseCase;
   getVisibleProductsUseCase: GetVisibleProductsUseCase;
+  createOfferUseCase: CreateOfferUseCase;
+  getOffersUseCase: GetOffersUseCase;
+  updateOfferUseCase: UpdateOfferUseCase;
+  deleteOfferUseCase: DeleteOfferUseCase;
+  getOfferByProductIdUseCase: GetOfferByProductIdUseCase;
+  getActiveOffersUseCase: GetActiveOffersUseCase;
 }
 
 export function registerUseCases(
@@ -75,12 +87,14 @@ export function registerUseCases(
 
   const createProductUseCase = new CreateProductUseCase(
     deps.productRepository,
-    deps.subcategoryRepository
+    deps.subcategoryRepository,
+    deps.fileStorageService
   );
 
   const updateProductUseCase = new UpdateProductUseCase(
     deps.productRepository,
-    deps.subcategoryRepository
+    deps.subcategoryRepository,
+    deps.fileStorageService
   );
 
   const deleteProductUseCase = new DeleteProductUseCase(
@@ -99,6 +113,30 @@ export function registerUseCases(
     deps.productRepository
   );
 
+  const createOfferUseCase = new CreateOfferUseCase(
+    deps.offerRepository
+  );
+
+  const getOffersUseCase = new GetOffersUseCase(
+    deps.offerRepository
+  );
+
+  const updateOfferUseCase = new UpdateOfferUseCase(
+    deps.offerRepository
+  );
+
+  const deleteOfferUseCase = new DeleteOfferUseCase(
+    deps.offerRepository
+  );
+
+  const getOfferByProductIdUseCase = new GetOfferByProductIdUseCase(
+    deps.offerRepository
+  );
+
+  const getActiveOffersUseCase = new GetActiveOffersUseCase(
+    deps.offerRepository
+  );
+
   return {
     createMainCategoryUseCase,
     getMainCategoriesWithSubcategoriesUseCase,
@@ -113,7 +151,13 @@ export function registerUseCases(
     deleteProductUseCase,
     getProductUseCase,
     getAllProductsUseCase,
-    getVisibleProductsUseCase
+    getVisibleProductsUseCase,
+    createOfferUseCase,
+    getOffersUseCase,
+    updateOfferUseCase,
+    deleteOfferUseCase,
+    getOfferByProductIdUseCase,
+    getActiveOffersUseCase
   };
 }
 

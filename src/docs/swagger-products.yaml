@@ -271,6 +271,10 @@ components:
           type: string
         status:
           $ref: "#/components/schemas/ProductStatus"
+        images:
+          type: array
+          items:
+            type: string
         createdAt:
           type: string
           format: date-time
@@ -283,6 +287,7 @@ components:
         - price
         - size
         - status
+        - images
         - createdAt
 
     CreateProductRequest:
@@ -304,6 +309,12 @@ components:
           type: string
         status:
           $ref: "#/components/schemas/ProductStatus"
+        images:
+          type: array
+          items:
+            type: string
+            format: binary
+          maxItems: 10
       required:
         - name
         - subcategoryName
@@ -332,6 +343,12 @@ components:
           type: string
         status:
           $ref: "#/components/schemas/ProductStatus"
+        images:
+          type: array
+          items:
+            type: string
+            format: binary
+          maxItems: 10
 
     ProductResponse:
       type: object

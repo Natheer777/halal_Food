@@ -1,0 +1,320 @@
+paths:
+  /offers:
+    get:
+      tags:
+        - Offers
+      summary: List all offers
+      operationId: getOffers
+      responses:
+        '200':
+          description: List of offers
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OffersResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    post:
+      tags:
+        - Offers
+      summary: Create a new offer
+      operationId: createOffer
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateOfferRequest'
+      responses:
+        '201':
+          description: Offer created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Offer'
+        '400':
+          description: Validation error or offer already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /offers/active:
+    get:
+      tags:
+        - Offers
+      summary: Get active offers with pagination
+      operationId: getActiveOffers
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+          description: Number of items per page
+      responses:
+        '200':
+          description: Paginated list of active offers
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActiveOffersResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  '/offers/product/{productId}':
+    get:
+      tags:
+        - Offers
+      summary: Get offer by Product ID
+      operationId: getOfferByProductId
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          description: ID of the product
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Offer details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Offer'
+        '404':
+          description: Offer not found for this product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  '/offers/{id}':
+    put:
+      tags:
+        - Offers
+      summary: Update an offer
+      operationId: updateOffer
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID of the offer
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                discountPercentage:
+                  type: integer
+                  minimum: 1
+                  maximum: 100
+                description:
+                  type: string
+                status:
+                  $ref: '#/components/schemas/OfferStatus'
+      responses:
+        '200':
+          description: Offer updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Offer'
+        '404':
+          description: Offer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      tags:
+        - Offers
+      summary: Delete an offer
+      operationId: deleteOffer
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID of the offer
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Offer deleted successfully
+        '404':
+          description: Offer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    OfferStatus:
+      type: string
+      enum: [active, inactive]
+
+    Offer:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        productId:
+          type: string
+          format: uuid
+        discountPercentage:
+          type: integer
+        description:
+          type: string
+        status:
+          $ref: '#/components/schemas/OfferStatus'
+        createdAt:
+          type: string
+          format: date-time
+        product:
+          $ref: './swagger-products.yaml#/components/schemas/Product'
+      required:
+        - id
+        - productId
+        - discountPercentage
+        - status
+        - createdAt
+
+    CreateOfferRequest:
+      type: object
+      properties:
+        productId:
+          type: string
+          format: uuid
+        discountPercentage:
+          type: integer
+          minimum: 1
+          maximum: 100
+        description:
+          type: string
+        status:
+          $ref: '#/components/schemas/OfferStatus'
+      required:
+        - productId
+        - discountPercentage
+
+    OfferResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        productId:
+          type: string
+          format: uuid
+        discountPercentage:
+          type: integer
+        description:
+          type: string
+        status:
+          $ref: '#/components/schemas/OfferStatus'
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - productId
+        - discountPercentage
+        - status
+        - createdAt
+
+    OffersResponse:
+      type: array
+      items:
+        $ref: '#/components/schemas/Offer'
+
+    ActiveOffersResponse:
+      type: object
+      properties:
+        offers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Offer'
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+        totalPages:
+          type: integer
+      required:
+        - offers
+        - total
+        - page
+        - limit
+        - totalPages
+
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: failed
+        message:
+          type: string
+      required:
+        - status
+        - message
+
+    ValidationErrorResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: failed
+        message:
+          type: string
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              msg:
+                type: string
+              param:
+                type: string
+              location:
+                type: string
+      required:
+        - status
+        - message
